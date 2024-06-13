@@ -1,9 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-   
+    <script src="../../../../libs/react.development.js"></script>
+    <script src="../../../../libs/react-dom.development.js"></script>
+    <script src="../../../../libs/babel-standalone.js"></script>
 </head>
 <body>
-    
+    <div id="app">  </div>
+    <script type="text/babel">
+        //対象elementを指定する
+        const appEl = document.querySelector("#app");
+        const root = ReactDOM.createRoot(appEl);
+        
+        //type="text/babel"とすることでhtmlタグの使用が可能となる
+        // root.render(<h1>こんにちは</h1>);
+
+        //コンポーネント(先頭は必ず大文字で記述　小文字だとhtmｌタグと誤認識される)
+        // function Example(){
+        //     return <h1>Hello React </h1>
+        // }
+
+        //アロー関数で書く
+        const Example = ()=>{
+            return <h1>Hello React </h1>
+        }
+
+
+        root.render(<Example />)
+
+    </script>
 </body>
 </html>
