@@ -19,7 +19,7 @@ return <h1> Hello </h1>; // コンポーネントはJSXを返す
 <Welcome/>
 ```
 
-
+実際にHTML内で使用してみる。
 ```html
 <!DOCTYPE html>
 <html>
@@ -50,7 +50,7 @@ return <h1> Hello </h1>; // コンポーネントはJSXを返す
 </html>
 ```
 
-アロー関数でもコンポーネントを定義できる
+アロー関数でもコンポーネントを定義できる。
 ```js
 const Example = ()=>{
 　return <h1>Hello React </h1>;
@@ -120,3 +120,206 @@ npm run dev
 ctrl + Cでサーバー停止
 
 
+## コンポーネントにスタイルを当ててみる
+reactでは「className」としてクラスを記述する。
+これはJavaScriptでのclassと混在しないようにするため。
+
+```js
+import "./Example.css" //Example.cssにCSSを記述する
+const Example = () => {
+  //改行するためにはreturnの後を( )で囲む
+  return (
+    <div className = "component">
+      <h3>Hello Component</h3>
+    </div>
+  );
+};
+export default Example;
+
+```
+
+
+## コンポーネントの分割方法
+
+今回は以下のソースのulタグ部分を分割してみる
+```js
+import "./Example.css" 
+const Example = () => {
+  return (
+    <div className = "component">
+        <h3>Hello Component</h3>
+        <ul>
+            <li>item-1</li>
+            <li>item-2</li>
+            <li>item-3</li>
+            <li>item-4</li>
+            <li>item-5</li>
+        </ul>
+    </div>
+  );
+};
+export default Example;
+
+```
+
+同じディレクトリ内にcomponentsというディレクトリを新しく作成し、コンポーネントファイルを作成
+
+```js
+const List = () => {
+    return (
+        <ul>
+            <li>item-1</li>
+            <li>item-2</li>
+            <li>item-3</li>
+            <li>item-4</li>
+            <li>item-5</li>
+        </ul>
+    )
+}
+
+//外部ファイルで使用可能にする
+export { List }
+
+```
+
+```js
+import "./Example.css" 
+import{ List } from "./components/List" //コンポーネントの読み込み
+const Example = () => {
+  return (
+    <div className = "component">
+      <h3>Hello Component</h3>
+      <List/>　//コンポーネントの呼び出し
+    </div>
+    
+  );
+};
+export default Example;
+
+```
+
+より細かく分割していく。 componentsディレクトリに先ほどのコードをChildというコンポーネントとして、作成。
+
+```js
+import "./Example.css" //Example.cssも同じディレクトリに移動
+import{ List } from "./List"
+const Child = () => {
+  return (
+    <div className = "component">
+      <h3>Hello Component</h3>
+      <List/>
+    </div>
+  );
+};
+
+export default Child;
+
+```
+
+最終的にここまで細かくできる。
+```js
+import{ Child } from "./components/Child"
+const Example = () => <Child/>;
+export default Example;
+
+```
+
+## React.Fragment
+jsxを使用する際には returnの中身をdivタグで囲む必要がある。
+ただ、無駄にdivタグを書いてしまうし、ブロック要素を入れたくない時にはかえって邪魔になる。
+そこで、Raact.Fragmentを使用することで、html上ではdivタグにならずにjsxもエラーにならない。
+```js
+import React from "react" //Reactのパッケージのデフォルトエクスポート
+const Example = () =>{
+    return (
+        <React.Fragment> //これはHTMLのタグとして読み込まれない
+            <div>
+                <h3> Hello Component </h3>
+            </div>
+            <p> hogehogehogehoge</p>
+        </React.Fragment>　//これはHTMLのタグとして読み込まれない
+    )
+}
+```
+
+ちなみにReactパッケージを名前付きのインポートにすると
+```js
+import {Fragment} from "react" //Reactのパッケージのデフォルトエクスポート
+const Example = () =>{
+    return (
+        <Fragment> //これはHTMLのタグとして読み込まれない
+            <div>
+                <h3> Hello Component </h3>
+            </div>
+            <p> hogehogehogehoge</p>
+        </Fragment>　//これはHTMLのタグとして読み込まれない
+    )
+}
+```
+
+さらにFragmentは省略できる。
+```js
+import {Fragment} from "react" //Reactのパッケージのデフォルトエクスポート
+const Example = () =>{
+    return (
+        <> //Fragmentの省略
+            <div>
+                <h3> Hello Component </h3>
+            </div>
+            <p> hogehogehogehoge</p>
+        </>　//Fragmentの省略
+    )
+}
+```
+
+### 補足
+Fragmentに関しては、HTMLタグとして読み込むことができないため、基本的には属性をつけることはできない。
+ただし「key」という属性はつけることができる。このkeyはループ処理で使用する。
+
+```js
+import {Fragment} from "react" 
+const Example = () =>{
+    return (
+        <Fragment key = ''> 
+            <div>
+                <h3> Hello Component </h3>
+            </div>
+            <p> hogehogehogehoge</p>
+        </Fragment>　
+    )
+}
+```
+
+## JavaScriptを埋め込んでみる
+JSの式は{ }を使用することで埋め込みをすることができる。
+今回はタイトルとCSSに対して式を埋め込んだ。
+ちなみに、JSのメソッドも使用することができる。
+toLocaleLowerCase()は全てを小文字にするメソッド。
+
+```js
+import "./Expression.css";
+
+const Expression = () =>{
+    const title = "Expression";
+    const arr = ["item1","item2","item3"];
+    //{ }を使用してJSの式を埋め込むことができる
+    const hello = (arg) => `${arg} Function`;
+    const jsx = <h3>Hello JSX</h3>;
+    const bool = true;
+
+    return(
+        <div className = {title.toLocaleLowerCase()}> 
+            <h3>Hello {title}</h3> 
+            <h3>{arr}</h3>
+            <h3>{hello('hello')}</h3>
+            <h3>{/*画面上に表示はされない */}</h3>
+            {<h3>Hello JSX</h3>}
+            {jsx}
+            {bool}
+        </div>
+    )
+}
+export default Expression;
+```
+### 補足
+booleanの値は画面上には出力されない。
