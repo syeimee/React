@@ -1,10 +1,12 @@
 import "./Example.css" //Example.cssにCSSを記述する
-const Example = () => {
+import{ List } from "./List"
+const Child = () => {
   return (
     <div className = "component">
       <h3>Hello Component</h3>
+      <List/>
     </div>
-    
   );
 };
-export default Example;
+
+export default Child;
