@@ -32,3 +32,10 @@ const Example = () => {
 };
 
 export default Example;
+
+
+const element = React.createElement(
+  'h1',
+  {className: 'greeting'},
+  'Hello World',
+);
