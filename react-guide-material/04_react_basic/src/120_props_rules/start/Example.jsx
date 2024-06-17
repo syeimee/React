@@ -5,10 +5,13 @@ import Bye from "./components/Bye"
 import Hello from "./components/Hello"
 
 const Example = () => {
+  const props = {
+    name: "TOM"
+  }
   return (
     <>
-      <Hello />
-      <Bye />
+      <Hello {...props}/>
+      <Bye {...props}/>
     </>
   );
 };
