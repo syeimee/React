@@ -38,3 +38,67 @@ writable：　値の書き換えができるか
 const element = (
     <h1>
 ```
+
+
+
+
+## useState
+画面が変更されるためには
+・再レンダリング（コンポーネントの再実行）
+・変更した値をstateに保存
+
+する必要がある。
+
+```js
+const Example = () =>{
+  let displayVal;
+  return (
+    <>
+      <input
+        type = "text"
+        onChange = {(e) =>{
+          displayVal = e.target.value
+        }}/> = {displauyVal}
+    </>  
+  );
+};
+
+export default Example;
+```
+
+## useStateの役割と使い方
+
+```js
+const[現在の値, 更新関数] = 初期値
+
+const[val, setVal] = useState(0)
+
+//値を更新したい場合は、更新関数を用いる
+setVal(1)
+```
+
+
+具体例(これはExampleそのものが再実行される)
+```js
+import { useState } from 'react';
+
+const Example = () => {
+  let [val, setVal] = useState();
+  console.log("再レンダリングされたよ")
+  return (
+    <>
+      <input
+        type = "text"
+        onChange = {(e) =>{
+          console.log(e.target.value);
+          setVal(e.target.value);
+        }}
+      />
+       ={val}
+    </>
+  );
+};
+
+export default Example;
+
+```
