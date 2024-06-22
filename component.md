@@ -33,3 +33,5 @@ memoizedStateのnextに値が保持されていることがわかる。
  <img src="/Users/yuu/Library/Mobile Documents/com~apple~CloudDocs/development/React/react-guide-material/useState.png">
 
 if文やloop文などを用いてuseStateの実行順序を変えてしまうと、エラーとなってしまう。
+
+
