@@ -19,9 +19,28 @@ const Example = () => {
             console.log(animal.indexOf(filterVal));
             return isMatch;
           })
-          .map((animal) => (
-            <li key={animal}>{animal}</li>
-          ))}
+          .map((animal) => {
+            //if文ver
+            // if(animal == "Dog"){
+            //   return (<li key={animal}>{animal + "★"}</li>)
+            // } else{
+            //   return (<li key={animal}>{animal}</li>)
+            // }
+
+            //三項演算子ver
+            // return <li key ={animal}>{
+            //   animal + (animal =="Dog" ? "★" : "")
+            // }</li>
+            //Reactでは真偽値は表示されないことを利用する
+            // animal == "Dog"がfalseになると表示されない
+            return(<li>{animal}{animal == "Dog" && "★"}</li>)
+
+            //NULL合体演算子
+            //A ?? B 
+            //Aがnullかundefinedの時にはBの値をとりそれ以外ならAの値を取る
+          
+          })
+        }
       </ul>
     </>
   );
