@@ -34,4 +34,78 @@ memoizedStateのnextに値が保持されていることがわかる。
 
 if文やloop文などを用いてuseStateの実行順序を変えてしまうと、エラーとなってしまう。
 
+## stateはコンポーネント毎に状態（値）を保持する
+コンポーネントに紐づく値はそれぞれ独立して管理される
+React要素のツリー内の位置によってどこのコンポーネントのstateか識別している。
+以下の例では、countAとcountBを別々の値としてコンポーネントが保持しているので、togleの切り替えをしても値は保持される。
+```js
+import { useState } from "react";
 
+const Example = () => {
+  const[toggle, setToggle] = useState(true);
+  const[countA, setCountA] = useState(0);
+  const[countB, setCountB] = useState(0);
+  const toggleComponent = () =>{
+    setToggle(prev => !prev)
+  }
+  return(
+    <>
+    <button onClick = {toggleComponent}>toggle</button>
+    {toggle ? <Count key = "A" title = "A" count = {countA} setCount={setCountA}/> : <Count  key = "B" title = "B" count = {countB} setCount={setCountB}/>}
+    </>
+  )
+}
+const Count = ({title,count,setCount}) =>{
+  const countUp = () => {
+    setCount((prevstate) => prevstate + 1);
+  };
+  const countDown = () => {
+    setCount(count - 1);
+  };
+  return (
+    <>
+      <h3>{title}:{count}</h3>
+      <button onClick={countUp}>+</button>
+      <button onClick={countDown}>-</button>
+    </>
+  );
+};
+
+export default Example;
+
+```
+
+
+## 配列のリスト表示
+
+```js
+
+const animals = ["Dog", "Cat", "Rat"];
+
+const Example = () => {
+  //animalsの要素をanimalとして受け取る
+  const helloAnimals = animals.map((animal) => <li>hello,{animal}</li>)
+  return (
+    <>
+      <h3>配列の操作</h3>
+      <ul>
+          {/* {helloAnimals} */}
+          {/* for文はjsxに記述できないが、mapならできるので、Reactではしばしばこちらを使用する */}
+          {animals.map((animal) => <li key = {animal}>hello,{animal}</li>)}
+      </ul>
+    </>
+  );
+};
+
+export default Example;
+```
+
+keyは一意に定まるものをつける。このkeyがあることでReactが再レンダリングの差分比較を行い、変更がある箇所のみを更新(commit)できる。
+
+　　　　　　　　　　　再レンダリング
+・key = "js"      ・key = "ruby" 
+・key = "ruby"    ・key = "python"
+・key = "Java"    ・key = "Go"
+                  ・key = "Java"
+
+差分比較の結果key="Go"のcommitを行う。
