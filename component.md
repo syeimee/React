@@ -163,3 +163,115 @@ const Example = () => {
 export default Example;
 
 ```
+
+
+
+
+
+
+## styled-components
+
+読み込み方法
+```js
+import styled from "styled-components";
+```
+
+記述方法
+```js
+const  コンポーネント名 = styled.htmlタグ名`
+------CSSをここに記述------
+この中にプロパティを渡す場合は、${}として渡す。
+`;
+```
+
+ボタンにCSSを当てる場合
+```js
+const StyledButton = styled.button`
+    margin: auto;
+    border-radius: 9999px;
+    border: none;
+    display: block;
+    width: 120px;
+    height: 60px;
+    font-weight: bold;
+    cursor: pointer;
+    background: ${(props) =>  props.isSelected ? 'pink' : ''};
+`;
+
+```
+
+```js
+<StyledButton>ボタン</StyledButton>
+```
+
+<img src="Button.png">
+
+継承をする場合
+```js
+const 継承先コンポーネント名 = styled(継承元コンポーネント名)`
+------CSSをここに記述------
+この中にプロパティを渡す場合は、${}として渡す。
+`;
+```
+
+```js
+const OrangeButton = styled(StyledButton)`
+  background-color: orange;
+`;
+```
+
+擬似クラスを使用する場合は&:hoverのように記述
+
+```js
+const OrangeButton = styled(StyledButton)`
+  background-color: orange;
+
+  &:hover {
+    color: red;
+  }
+`;
+```
+
+サイト全体で適応する場合は、外部CSSをインポートする
+それ以外はstyled-componentsが推奨される
+
+
+## CSSフレームワーク(ChakuraUI)
+https://v2.chakra-ui.com/docs/styled-system/theme
+https://v2.chakra-ui.com/getting-started/cra-guide
+https://v2.chakra-ui.com/docs/styled-system/theme?scroll=true#spacing
+
+
+```js
+import { 使用するコンポーネント名} from "@chakra-ui/react";
+```
+```js
+import { VStack, StackDivider } from "@chakra-ui/react";
+const List = ({todos, deleteTodo}) => {
+    const complete = (id) => {
+        deleteTodo(id)
+    }
+    return (
+        <VStack
+            divider ={<StackDivider/>}
+            color = {{sm:'red.600',md:'blue.600',lg:'green.500',xl:'red.600'}}
+            borderColor = "black.100"
+            borderWidth = "1px"
+            borderRadius = "3px"
+            padding = {5}
+            alignItems="start"
+        >
+            {todos.map(todo => {
+                return (
+                    <div key={todo.id}>
+                        <button onClick={() => complete(todo.id)}>完了</button>
+                        <span>{todo.content}</span>
+                    </div>
+                )
+            })}
+        </VStack>
+    );
+}
+
+export default List;
+```
