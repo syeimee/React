@@ -1,277 +1,115 @@
-## useStateを使用するときの注意点
-useStateの呼び出しは必ずトップレベルで（if文の中などでない）呼び出す必要がある。
-以下を実行し、consoleを確認してみると、
+## useReducer
+useStateの書き換えに利用
+
+useStateとusereduceの違い
+
+・useStateは利用する側に更新の仕方を託す
+
 ```js
-import {useState} from "react"
+const[state,setState] = useState(0);//初期値しか渡さない
 
-const Example = () =>{
-  console.log(<Example/>);
-  const[ countA, setCountA] = useState(0);
-  const[ countB, setCountB] = useState(10);
-  const[ countC, setCountC] = useState(100);
-  return(
-    <>
-        <p>ボタンAを{countA}回押しました！</p>
-        <button onClick = {() =>{
-            setCountA(countA + 1);
-        }}>ボタンA</button>
 
-        <p>ボタンAを{countB}回押しました！</p>
-        <button onClick = {() =>{
-            setCountB(countB + 1);
-        }}>ボタンB</button>
-
-        <p>ボタンAを{countC}回押しました！</p>
-        <button onClick = {() =>{
-            setCountC(countC + 1);
-        }}>ボタンC</button>
-    </>
-  )
+const countUp = () =>{
+  setState((prev) => prev +=1 );//setStateを呼ぶ利用側が更新を定義
 }
 ```
-memoizedStateのnextに値が保持されていることがわかる。
- <img src="/Users/yuu/Library/Mobile Documents/com~apple~CloudDocs/development/React/react-guide-material/useState.png">
 
-if文やloop文などを用いてuseStateの実行順序を変えてしまうと、エラーとなってしまう。
-
-## stateはコンポーネント毎に状態（値）を保持する
-コンポーネントに紐づく値はそれぞれ独立して管理される
-React要素のツリー内の位置によってどこのコンポーネントのstateか識別している。
-以下の例では、countAとcountBを別々の値としてコンポーネントが保持しているので、togleの切り替えをしても値は保持される。
+・usereducerは状態側に更新の仕方を託す
+→アプリケーションが大きくなると管理がしやすい
 ```js
-import { useState } from "react";
-
-const Example = () => {
-  const[toggle, setToggle] = useState(true);
-  const[countA, setCountA] = useState(0);
-  const[countB, setCountB] = useState(0);
-  const toggleComponent = () =>{
-    setToggle(prev => !prev)
+const[rstate, dispatch] = useReducer((prev, {type,step})=> {
+  switch(type){
+    case "+":
+      return prev += step
+    case "-":
+      return prev -= step
+    default:
+      throw new Error("不適切な設定です")
   }
-  return(
-    <>
-    <button onClick = {toggleComponent}>toggle</button>
-    {toggle ? <Count key = "A" title = "A" count = {countA} setCount={setCountA}/> : <Count  key = "B" title = "B" count = {countB} setCount={setCountB}/>}
-    </>
-  )
-}
-const Count = ({title,count,setCount}) =>{
-  const countUp = () => {
-    setCount((prevstate) => prevstate + 1);
-  };
-  const countDown = () => {
-    setCount(count - 1);
-  };
-  return (
-    <>
-      <h3>{title}:{count}</h3>
-      <button onClick={countUp}>+</button>
-      <button onClick={countDown}>-</button>
-    </>
-  );
-};
+});
 
-export default Example;
-
-```
-
-
-## 配列のリスト表示
-
-```js
-
-const animals = ["Dog", "Cat", "Rat"];
-
-const Example = () => {
-  //animalsの要素をanimalとして受け取る
-  const helloAnimals = animals.map((animal) => <li>hello,{animal}</li>)
-  return (
-    <>
-      <h3>配列の操作</h3>
-      <ul>
-          {/* {helloAnimals} */}
-          {/* for文はjsxに記述できないが、mapならできるので、Reactではしばしばこちらを使用する */}
-          {animals.map((animal) => <li key = {animal}>hello,{animal}</li>)}
-      </ul>
-    </>
-  );
-};
-
-export default Example;
-```
-
-keyは一意に定まるものをつける。このkeyがあることでReactが再レンダリングの差分比較を行い、変更がある箇所のみを更新(commit)できる。
-
-　　　　　　　　　　　再レンダリング
-・key = "js"      ・key = "ruby" 
-・key = "ruby"    ・key = "python"
-・key = "Java"    ・key = "Go"
-                  ・key = "Java"
-
-差分比較の結果key="Go"のcommitを行う。
-
-条件分岐
-```js
-import { useState } from "react";
-
-const Example = () => {
-  const animals = ["Dog", "Cat", "Rat"];
-
-  const [filterVal, setFilterVal] = useState("");
-
-  return (
-    <>
-      <input
-        type="text"
-        value={filterVal}
-        onChange={(e) => setFilterVal(e.target.value)}
-      />
-      <ul>
-        {animals
-          .filter((animal) => {
-            const isMatch = animal.indexOf(filterVal) !== -1;
-            console.log(animal.indexOf(filterVal));
-            return isMatch;
-          })
-          .map((animal) => {
-            //if文ver
-            // if(animal == "Dog"){
-            //   return (<li key={animal}>{animal + "★"}</li>)
-            // } else{
-            //   return (<li key={animal}>{animal}</li>)
-            // }
-
-            //三項演算子ver
-            // return <li key ={animal}>{
-            //   animal + (animal =="Dog" ? "★" : "")
-            // }</li>
-            //Reactでは真偽値は表示されないことを利用する
-            // animal == "Dog"がfalseになると表示されない
-            return(<li>{animal}{animal == "Dog" && "★"}</li>)
-
-            //NULL合体演算子
-            //A ?? B 
-            //Aがnullかundefinedの時にはBの値をとりそれ以外ならAの値を取る
-          
-          })
-        }
-      </ul>
-    </>
-  );
-};
-
-export default Example;
-
-```
-
-
-
-
-
-
-## styled-components
-
-読み込み方法
-```js
-import styled from "styled-components";
-```
-
-記述方法
-```js
-const  コンポーネント名 = styled.htmlタグ名`
-------CSSをここに記述------
-この中にプロパティを渡す場合は、${}として渡す。
-`;
-```
-
-ボタンにCSSを当てる場合
-```js
-const StyledButton = styled.button`
-    margin: auto;
-    border-radius: 9999px;
-    border: none;
-    display: block;
-    width: 120px;
-    height: 60px;
-    font-weight: bold;
-    cursor: pointer;
-    background: ${(props) =>  props.isSelected ? 'pink' : ''};
-`;
-
-```
-
-```js
-<StyledButton>ボタン</StyledButton>
-```
-
-<img src="Button.png">
-
-継承をする場合
-```js
-const 継承先コンポーネント名 = styled(継承元コンポーネント名)`
-------CSSをここに記述------
-この中にプロパティを渡す場合は、${}として渡す。
-`;
-```
-
-```js
-const OrangeButton = styled(StyledButton)`
-  background-color: orange;
-`;
-```
-
-擬似クラスを使用する場合は&:hoverのように記述
-
-```js
-const OrangeButton = styled(StyledButton)`
-  background-color: orange;
-
-  &:hover {
-    color: red;
+  const rcountUp = () =>{
+    dispatch({type: "+",step: 3});//actionを引数で指定
   }
-`;
+  const rcountDown = () =>{
+    dispatch({type: "-",step: 200});//actionを引数で指定
+  }
+
 ```
 
-サイト全体で適応する場合は、外部CSSをインポートする
-それ以外はstyled-componentsが推奨される
 
-
-## CSSフレームワーク(ChakuraUI)
-https://v2.chakra-ui.com/docs/styled-system/theme
-https://v2.chakra-ui.com/getting-started/cra-guide
-https://v2.chakra-ui.com/docs/styled-system/theme?scroll=true#spacing
-
+reducerにtype,payloadのactionをまとめた例
 
 ```js
-import { 使用するコンポーネント名} from "@chakra-ui/react";
-```
-```js
-import { VStack, StackDivider } from "@chakra-ui/react";
-const List = ({todos, deleteTodo}) => {
-    const complete = (id) => {
-        deleteTodo(id)
-    }
-    return (
-        <VStack
-            divider ={<StackDivider/>}
-            color = {{sm:'red.600',md:'blue.600',lg:'green.500',xl:'red.600'}}
-            borderColor = "black.100"
-            borderWidth = "1px"
-            borderRadius = "3px"
-            padding = {5}
-            alignItems="start"
-        >
-            {todos.map(todo => {
-                return (
-                    <div key={todo.id}>
-                        <button onClick={() => complete(todo.id)}>完了</button>
-                        <span>{todo.content}</span>
-                    </div>
-                )
-            })}
-        </VStack>
-    );
+import { useReducer } from "react";
+
+const CALC_OPTIONS = ["add", "minus", "divide", "multiply"];
+
+const reducer = (state, {type, payload}) => {
+  switch (type){
+    case 'change':
+      return {...state, [payload.name]: payload.value};
+    case 'add':
+      return {...state, result: state.a + state.b};
+    case 'minus':
+      return {...state, result: state.a - state.b};
+    case 'divide':
+      return {...state, result: state.a / state.b};
+    case 'multiply':
+      return {...state, result: state.a * state.b};
+    default:
+      throw new Error("不明なタイプです。");
+  }
 }
 
-export default List;
+const Example = () => {
+  const initState = {
+    a: 1,
+    b: 2,
+    result: 3,
+  };
+
+  const [state, dispatch] = useReducer(reducer, initState);
+
+  const calculate = (e) => {
+    dispatch({type: e.target.value})
+  };
+
+  const numChangeHandler = (e) => {
+    dispatch ({type: 'change',payload:{name: e.target.name, value:
+    parseInt(e.target.value)}})
+  }
+
+  return (
+    <>
+      <div>
+        a:
+        <input
+          type="number"
+          name="a"
+          value={state.a}
+          onChange={numChangeHandler}
+        />
+      </div>
+      <div>
+        b:
+        <input
+          type="number"
+          name="b"
+          value={state.b}
+          onChange={numChangeHandler}
+        />
+      </div>
+      <select value={state.type} onChange={calculate}>
+        {CALC_OPTIONS.map((calc) =>{
+          return(<option key={calc} value = {calc}>{calc}</option>)
+        })}
+      </select>
+      <h1>結果：{state.result}</h1>
+    </>
+  );
+};
+
+export default Example;
+
 ```
