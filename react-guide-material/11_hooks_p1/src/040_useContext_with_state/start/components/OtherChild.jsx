@@ -1,6 +1,5 @@
 import { useContext } from "react";
 import { MyContext } from "../Example";
-MyContext
 const OtherChild = () => {
   const[,setState] = useContext(MyContext);
   const clickHandler = (e) => {
