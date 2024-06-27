@@ -7,14 +7,19 @@ const Todo = () => {
     {
       id: 1,
       content: "店予約する",
+      editing: false
     },
     {
       id: 2,
       content: "卵買う",
+      editing: false
+
     },
     {
       id: 3,
       content: "郵便出す",
+      editing: false
+
     },
   ];
 
@@ -31,10 +36,16 @@ const Todo = () => {
   const createTodo = (todo) => {
     setTodos([...todos, todo]);
   }
+  const updateTodo = (todo) =>{
+    const newTodos = todos.map(_todo => {
+      return _todo.id === todo.id ? {..._todo, ...todo} : { ..._todo};
+    })
+    return newTodos;
+  }
 
   return (
     <>
-      <List todos={todos} deleteTodo={deleteTodo}/>
+      <List todos={todos} deleteTodo={deleteTodo} updateTodo = { updateTodo}/>
       <Form createTodo={createTodo}/>
     </>
   )
