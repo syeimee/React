@@ -1,8 +1,6 @@
 import Item from "../components/Item"
-const List = ({todos, deleteTodo, updateTodo}) => {
-    const complete = (id) => {
-        deleteTodo(id)
-    }
+const List = () => {
+    const todos = useTodos();
     return (
         <div>
             {todos.map(todo => {
@@ -10,9 +8,7 @@ const List = ({todos, deleteTodo, updateTodo}) => {
                     <Item 
                         key = {todo.id} 
                         todo = {todo}
-                        complete = {complete}
-                        updateTodo = {updateTodo}
-                        />
+                    />
                 )
             })}
         </div>

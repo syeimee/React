@@ -1,23 +1,32 @@
 import {useState} from "react"
-const Item = ({todo,complete,updateTodo}) => {
+import { useDispatchTodos } from "../context/TodoContext";
+const Item = ({todo}) => {
     const [editingContent, setEditingContent] = useState(todo.content);
+    const dispatch = useDispatchTodos();
+
+
     const changeContent = (e) =>  {
         setEditingContent(e.target.value);
     }
+
     const toggleEditMode = () => {
-        const newTodo = {...todo, editing: !todo.editing}
-        updateTodo(newTodo);
+        const newTodo = {...todo, editing: !todo.editing};
+        dispatch({type: 'todo/update',todo: newTodo});
     }
+
     const confirmContent = (e) =>{
         e.preventDefault();
         const newTodo = {...todo, editing: !todo.editing, content: editingContent};
-        updateTodo(newTodo);
+        dispatch({type: 'todo/update',todo: newTodo});
+    }
 
+    const complete = (todo) =>{
+        dispatch({type: 'todo/delete',todo: todo});
+    }
 
-    };
     return(
         <div key={todo.id}>
-            <button onClick={() => complete(todo.id)}>完了</button>
+            <button onClick={() => complete(todo)}>完了</button>
             <form onSubmit = {confirmContent} style = { {display: 'inline'} }>
                 {todo.editing ? 
                     (<input type ="text"
