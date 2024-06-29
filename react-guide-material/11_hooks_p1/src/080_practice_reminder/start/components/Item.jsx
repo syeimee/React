@@ -5,19 +5,27 @@ const Item = ({todo,complete,updateTodo}) => {
         setEditingContent(e.target.value);
     }
     const toggleEditMode = () => {
-        debugger
         const newTodo = {...todo, editing: !todo.editing}
         updateTodo(newTodo);
     }
+    const confirmContent = (e) =>{
+        e.preventDefault();
+        const newTodo = {...todo, editing: !todo.editing, content: editingContent};
+        updateTodo(newTodo);
+
+
+    };
     return(
         <div key={todo.id}>
             <button onClick={() => complete(todo.id)}>完了</button>
-            {todo.editing ? 
-                (<input type ="text"
-                value ={editingContent}
-                onChange = {changeContent}></input>
-                ): (<span onDoubleClick={toggleEditMode}>{todo.content}</span>)
-            }
+            <form onSubmit = {confirmContent} style = { {display: 'inline'} }>
+                {todo.editing ? 
+                    (<input type ="text"
+                    value ={editingContent}
+                    onChange = {changeContent}></input>
+                    ): (<span onDoubleClick={toggleEditMode}>{todo.content}</span>)
+                }
+            </form>
         </div>
     )
 }
