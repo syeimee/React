@@ -4,7 +4,7 @@ const Example = () =>{
   const[isDisp,setIsDisp] = useState(true);
   return(<>
     {isDisp && <Timer/>}
-    <button onClick={() =>{setIsDisp(prev => !prev)}}>トグル</button>
+    <button onClick={() =>{setIsDisp(prev => !prev)}}></button>
   </>)
 }
 
