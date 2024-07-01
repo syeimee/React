@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useDispatchTodos } from "../context/TodoContext"
 const Form = ({ createTodo }) => {
   const [enteredTodo, setEnteredTodo] = useState("");
   const dispatch = useDispatchTodos();
@@ -8,10 +9,9 @@ const Form = ({ createTodo }) => {
     const newTodo = {
       id: Math.floor(Math.random() * 1e5),
       content: enteredTodo,
-      editing: false,
     };
 
-    dispatch({type: 'todo/add',newTodo});
+    dispatch({type: 'todo/add',todo:newTodo, editing: false});
 
     setEnteredTodo("");
   };

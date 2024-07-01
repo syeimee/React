@@ -23,7 +23,7 @@ const todosList = [
     },
   ];
 const todoReducer = (todos, action) =>{
-    switch(action, type){
+    switch(action.type){
         case 'todo/add':
             return [...todos, action.todo];
         case 'todo/delete':
